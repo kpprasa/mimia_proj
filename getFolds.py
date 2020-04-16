@@ -37,4 +37,5 @@ def getFold(fold = 0, fname_in = 'trainFolds.csv',
             
 if __name__ == "__main__":
     # Get all folds except 0 from trainset
-    getFold(fold=0, fnames=['Nodules_gt.csv']) # want consolidated 
+    fold = input('fold number?')
+    getFold(fold=fold, fnames=['Nodules_gt.csv'], prefix_out='val_fold_{}'.format(fold), excludeFold=False) # want consolidated 

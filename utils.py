@@ -64,8 +64,8 @@ def extractCube(scan, spacing, xyz, cube_size=80, cube_size_mm=51):
     '''
 
     # Extract cube of cube_size^3 voxels and world dimensions of cube_size_mm^3 mm from scan at image coordinates xyz
-    xyz = np.array([xyz[i] for i in [2,1,0]],np.int)
-    spacing = np.array([spacing[i] for i in [2,1,0]])
+    xyz = np.array([xyz[i] for i in [2,1,0]],np.int) # itk convention
+    spacing = np.array([spacing[i] for i in [2,1,0]]) # itk convention
     scan_halfcube_size = np.array(cube_size_mm/spacing/2,np.int)
     if np.any(xyz<scan_halfcube_size) or np.any(xyz+scan_halfcube_size>scan.shape): # check if padding is necessary
         maxsize = max(scan_halfcube_size)
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     rad = 1
     finding = 1
     # Read scan
-    [scan,spacing,origin,transfmat] =  readMhd('data/LNDb-{:04}.mhd'.format(lnd))
+    [scan,spacing,origin,transfmat] =  readMhd("data/LNDb-0001.mhd")
     print(spacing,origin,transfmat)
     # Read segmentation mask
     [mask,spacing,origin,transfmat] =  readMhd('masks/LNDb-{:04}_rad{}.mhd'.format(lnd,rad))
