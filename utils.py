@@ -57,7 +57,12 @@ def convertToWorldCoord(xyz,origin,transfmat_toworld):
     xyz = xyz + origin
     return xyz
 
-def extractCube(scan,spacing,xyz,cube_size=80,cube_size_mm=51):
+def extractCube(scan, spacing, xyz, cube_size=80, cube_size_mm=51):
+    ''' scan = image
+        spacing = list or tuple of spacing along each axis 
+        xyz = center of the cube (image coordinates)
+    '''
+
     # Extract cube of cube_size^3 voxels and world dimensions of cube_size_mm^3 mm from scan at image coordinates xyz
     xyz = np.array([xyz[i] for i in [2,1,0]],np.int)
     spacing = np.array([spacing[i] for i in [2,1,0]])

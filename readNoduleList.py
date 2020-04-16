@@ -1,3 +1,4 @@
+''' For matching different radiologists' readings into a single ground truth'''
 import numpy as np
 import math
 
@@ -8,7 +9,7 @@ def nodEqDiam(vol):
     return 2*(vol*3/(4*math.pi))**(1/3)
 
 def joinNodules(nodules,verb=False):
-    # join nodules from different radiologists (if within radiusor 3mm from each other)
+    # join nodules from different radiologists (if within radius or 3mm from each other)
     header = nodules[0]
     lines = nodules[1:]
     lndind = header.index('LNDbID')
