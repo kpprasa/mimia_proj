@@ -87,6 +87,7 @@ if __name__ == "__main__":
     rad = 1
     finding = 1
     # Read scan
+    # ../drive/My Drive/MIMIA/ for colab
     [scan,spacing,origin,transfmat] =  readMhd("data/LNDb-0001.mhd")
     print(spacing,origin,transfmat)
     # Read segmentation mask
