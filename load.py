@@ -107,9 +107,10 @@ def generate_data(data_file, fold, data_path='data/', is_train=True):
     # load and save examples (subimages) and labels (textures)
     examples = []
     labels = []
-    for img_name, centers in consolidate_centers.items():
-        examples += load_image(os.path.join(data_path, img_name), centers)
-        labels += consolidate_labels[img_name]
+    for Id, centers in consolidate_centers.items():
+        img_name = 'LNDb-{:04}.mhd'.format(int(Id))
+        examples += load_image(os.path.join(data_path,img_name), centers)
+        labels += consolidate_labels[Id]
 
     examples = np.array(examples)
     labels = np.array(labels)
@@ -132,7 +133,7 @@ def generate_data(data_file, fold, data_path='data/', is_train=True):
 if __name__ == "__main__":
     fold = input("Which fold would you like to load for validation?")
     train_file = 'folds_exclude_{}Nodules_gt.csv'.format(fold)
-    val_file = 'val_fold_{}_Nodules_gt.csv'.format(fold)
+    val_file = 'val_fold_{}Nodules_gt.csv'.format(fold)
     generate_data(train_file, fold)
     generate_data(val_file, fold, is_train=False)
     
