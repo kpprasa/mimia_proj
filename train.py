@@ -36,7 +36,7 @@ def train_loop_adversarial(
         model.eval()
         for param in model.parameters():
             param.requires_grad = False
-        examples = adversary.perturb(examples, labels)
+        examples = adversary.perturb(examples, labels.type(torch.LongTensor))
         for param in model.parameters():
             param.requires_grad = True
         model.train()
