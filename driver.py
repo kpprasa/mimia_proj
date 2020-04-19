@@ -136,7 +136,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 if __name__ == "__main__":
     # Setup
     train_loader, val_loader = get_dataloaders(
-        args.batch_size, args.fold, DEVICE, args.datapath)
+        args.batch_size, args.fold, DEVICE, datapath=args.datapath)
     
     adv_step = 0.25 * args.train_adv_epsilon
     train_adversary_settings = (

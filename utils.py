@@ -143,7 +143,7 @@ def rescale(data):
     m = torch.max(torch.abs(data))
     return data / m 
 
-def get_dataloaders(batch_size, fold=0, DEVICE='cuda', datapath):
+def get_dataloaders(batch_size, fold, DEVICE, datapath):
     """
     Used to get dataloaders which is used for standard training. 
     """
@@ -154,7 +154,7 @@ def get_dataloaders(batch_size, fold=0, DEVICE='cuda', datapath):
         os.path.join(datapath, 'train_data_except_{}.npy'.format(
             fold)), allow_pickle=True)
     val_labels = np.load(os.path.join(datapath, 'val_labels_except_{}.npy'.format(fold)),
-                        allow_pickle=True)  # N x S (variable)
+                        allow_pickle=True)  
     train_labels = np.load(
         os.path.join(datapath, 'train_labels_except_{}.npy'.format(
             fold)), allow_pickle=True)

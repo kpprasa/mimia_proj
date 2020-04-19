@@ -71,27 +71,27 @@ def process_line(header, line, consolidate_centers, consolidate_labels):
     respectively
     where the labels are thresholded 
     '''
-    ID = header.index('LNDbID')
+    ID = line[header.index('LNDbID')]
     if ID in consolidate_centers:
         if ID not in consolidate_labels:
             raise NameError('ID is in centers but not labels')
-        consolidate_centers[line[header.index('LNDbID')]].append(
+        consolidate_centers[ID].append(
             np.array(
                 [float(line[header.index('x')]), float(line[header.index('y')]), float(line[header.index('z')])]
             )
         )
-        consolidate_labels[line[header.index('LNDbID')]].append(
+        consolidate_labels[ID].append(
             threshold_texture(float(line[header.index('Text')]))
         )
     else:
         if ID in consolidate_labels:
             raise NameError('ID is in labels but not centers')
-        consolidate_centers[line[header.index('LNDbID')]] = [np.array([float(line[header.index('x')]), float(line[header.index('y')]), float(line[header.index('z')])])]
-        consolidate_labels[line[header.index('LNDbID')]] = [
+        consolidate_centers[ID] = [np.array([float(line[header.index('x')]), float(line[header.index('y')]), float(line[header.index('z')])])]
+        consolidate_labels[ID] = [
             threshold_texture(float(line[header.index('Text')]))
         ]
 
-def generate_data(data_file, fold, data_path='data/', is_train=True):
+def generate_data(data_file, fold, data_path='../data/', is_train=True):
 
     
     lines = readCsv(data_file)
@@ -132,8 +132,8 @@ def generate_data(data_file, fold, data_path='data/', is_train=True):
 
 if __name__ == "__main__":
     fold = input("Which fold would you like to load for validation?")
-    train_file = 'folds_exclude_{}Nodules_gt.csv'.format(fold)
-    val_file = 'val_fold_{}Nodules_gt.csv'.format(fold)
+    train_file = '../folds_exclude_{}Nodules_gt.csv'.format(fold)
+    val_file = '../val_fold_{}Nodules_gt.csv'.format(fold)
     generate_data(train_file, fold)
     generate_data(val_file, fold, is_train=False)
     
