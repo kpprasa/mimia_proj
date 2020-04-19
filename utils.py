@@ -161,13 +161,13 @@ def get_dataloaders(batch_size, fold, DEVICE, datapath):
 
 
     # probably want to mean normalize over time
-    val_labels = torch.tensor(val_labels)
-    val_data = torch.tensor(val_data)
+    val_labels = torch.FloatTensor(val_labels)
+    val_data = torch.FloatTensor(val_data)
     val_data = mean_normalize(val_data)
     val_data = rescale(val_data)
 
-    train_labels = [torch.Tensor(y) for y in train_labels]
-    train_data = [torch.Tensor(x) for x in train_data]
+    train_labels = torch.FloatTensor(train_labels)
+    train_data = torch.FloatTensor(train_data)
     train_data = mean_normalize(train_data)
     train_data = rescale(train_data)
 
@@ -175,10 +175,10 @@ def get_dataloaders(batch_size, fold, DEVICE, datapath):
     class LNDbDataset(Dataset):
         def __init__(self, examples, labels):
             self.examples=examples
-            self.phonemes=labels
+            self.labels=labels
         def __getitem__(self, i):
             ''' returns the example and label of the corresponding index'''
-            return self.examples[i, :,:,:], self.phonemes[i,:,:,:]
+            return self.examples[i], self.labels[i]
         def __len__(self):
             return self.labels.shape[0]
     

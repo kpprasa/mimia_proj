@@ -119,14 +119,14 @@ def generate_data(data_file, fold, data_path='../data/', is_train=True):
     # so we save as a pickle file (serialized file) to be loaded by ML model
     data = ('train' if is_train else 'val') + \
         '_data_except_{}.npy'.format(fold)
-    labels = ('train' if is_train else 'val') + \
+    texture_file = ('train' if is_train else 'val') + \
         '_labels_except_{}.npy'.format(fold)
 
     DATAFILE = open(data, mode='wb')
     pickle.dump(examples, DATAFILE)
     DATAFILE.close()
 
-    LABELFILE = open(labels, mode='wb')
+    LABELFILE = open(texture_file, mode='wb')
     pickle.dump(labels, LABELFILE)
     LABELFILE.close()
 

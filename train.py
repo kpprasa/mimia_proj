@@ -28,6 +28,7 @@ def train_loop_adversarial(
         optimizer.zero_grad()
 
         examples, labels = examples.to(device), labels.to(device)
+        examples = torch.unsqueeze(examples,1) # need to explicitly represent 1 input channel
 
         # Generate adversarial training examples
         # The model should not accumulate gradients in this step
