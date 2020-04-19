@@ -68,7 +68,7 @@ parser.add_argument(
 parser.add_argument(
     "--train_adv_epsilon",
     type=float,
-    default=8 / 255,
+    default=0.05,
     help="Radius of sphere for PGD adversary used for training",
 )
 parser.add_argument(
@@ -80,7 +80,7 @@ parser.add_argument(
 parser.add_argument(
     "--eval_adv_epsilon",
     type=float,
-    default=8 / 255,
+    default=0.05,
     help="Radius of sphere for PGD adversary used for eval",
 )
 parser.add_argument(
@@ -95,13 +95,13 @@ parser.add_argument(
 parser.add_argument(
     "--do_saving",
     type=int,
-    default=0,
+    default=1,
     help="0 to skip saving, 1 to save model being trained",
 )
 parser.add_argument(
     "--save_directory",
     type=str,
-    default="saves",
+    default="../saves",
     help="Directory to a saved model file",
 )
 parser.add_argument(
@@ -136,7 +136,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 if __name__ == "__main__":
     # Setup
     train_loader, val_loader = get_dataloaders(
-        args.batch_size, args.fold, DEVICE)
+        args.batch_size, args.fold, DEVICE, args.datapath)
     
     adv_step = 0.25 * args.train_adv_epsilon
     train_adversary_settings = (

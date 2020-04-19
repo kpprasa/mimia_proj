@@ -10,7 +10,7 @@
 import shutil
 import PIL
 from torchvision import datasets, transforms
-from torch.utils.data import TensorDataset, DataLoader
+from torch.utils.data import TensorDataset, DataLoader, Dataset
 import torch
 import csv
 import os
@@ -143,19 +143,21 @@ def rescale(data):
     m = torch.max(torch.abs(data))
     return data / m 
 
-def get_dataloaders(batch_size, fold=0, DEVICE='cuda'):
+def get_dataloaders(batch_size, fold=0, DEVICE='cuda', datapath):
     """
     Used to get dataloaders which is used for standard training. 
     """
 
     # Load data
-    val_data = np.load('val_data_except_{}.npy'.format(fold), allow_pickle=True)
+    val_data = np.load(os.path.join(datapath,'val_data_except_{}.npy'.format(fold)), allow_pickle=True)
     train_data = np.load(
-        'train_data_except_{}.npy'.format(fold), allow_pickle=True)
-    val_labels = np.load('val_labels_except_{}.npy'.format(fold),
+        os.path.join(datapath, 'train_data_except_{}.npy'.format(
+            fold)), allow_pickle=True)
+    val_labels = np.load(os.path.join(datapath, 'val_labels_except_{}.npy'.format(fold)),
                         allow_pickle=True)  # N x S (variable)
     train_labels = np.load(
-        'train_labels_except_{}.npy'.format(fold), allow_pickle=True)
+        os.path.join(datapath, 'train_labels_except_{}.npy'.format(
+            fold)), allow_pickle=True)
 
 
     # probably want to mean normalize over time
