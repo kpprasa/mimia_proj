@@ -118,9 +118,9 @@ def generate_data(data_file, fold, data_path='data/', is_train=True):
     # now the labels and examples should be in order
     # so we save as a pickle file (serialized file) to be loaded by ML model
     data = ('train' if is_train else 'val') + \
-        '_data_except_{}'.format(fold)
+        '_data_except_{}.npy'.format(fold)
     labels = ('train' if is_train else 'val') + \
-        '_labels_except_{}'.format(fold)
+        '_labels_except_{}.npy'.format(fold)
 
     DATAFILE = open(data, mode='wb')
     pickle.dump(examples, DATAFILE)

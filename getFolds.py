@@ -1,3 +1,15 @@
+''' getFolds.py
+
+    Creates k-folds csv from training data csv. 
+    If excludeFold=True, then this is for training (ie others are consolidated)
+    else for validation. 
+    From LNDb challenge. Modified to fit needs of generation. 
+
+    ______________________________________________________
+    by Kiran Prasad <kiranpra@cs.cmu.edu>
+    16-725 Methods in Medical Image Analysis Final Project
+    ======================================================
+'''
 import numpy as np
 import random
 import csv

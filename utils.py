@@ -1,3 +1,17 @@
+''' utils.py
+    
+    Contains many helper functions. Some are associated with the LNDb Dataset, while others
+    are written for the neural network itself. 
+    ______________________________________________________
+    by Kiran Prasad <kiranpra@cs.cmu.edu>
+    16-725 Methods in Medical Image Analysis Final Project
+    ======================================================
+'''
+import shutil
+import PIL
+from torchvision import datasets, transforms
+from torch.utils.data import TensorDataset, DataLoader
+import torch
 import csv
 import os
 import sys
@@ -58,12 +72,15 @@ def convertToWorldCoord(xyz,origin,transfmat_toworld):
     return xyz
 
 def extractCube(scan, spacing, xyz, cube_size=80, cube_size_mm=51):
-    ''' scan = image
+    ''' Extract cube of cube_size^3 voxels and world dimensions of cube_size_mm^3 mm 
+        from scan at image coordinates xyz
+
+
+        scan = image
         spacing = list or tuple of spacing along each axis 
         xyz = center of the cube (image coordinates)
     '''
 
-    # Extract cube of cube_size^3 voxels and world dimensions of cube_size_mm^3 mm from scan at image coordinates xyz
     xyz = np.array([xyz[i] for i in [2,1,0]],np.int) # itk convention
     spacing = np.array([spacing[i] for i in [2,1,0]]) # itk convention
     scan_halfcube_size = np.array(cube_size_mm/spacing/2,np.int)
@@ -77,10 +94,118 @@ def extractCube(scan, spacing, xyz, cube_size=80, cube_size_mm=51):
                     xyz[2]-scan_halfcube_size[2]:xyz[2]+scan_halfcube_size[2]]
 
     sh = scancube.shape
-    scancube = zoom(scancube,(cube_size/sh[0],cube_size/sh[1],cube_size/sh[2]),order=2) #resample for cube_size
-    
+    # resample for cube_size
+    scancube = zoom(
+        scancube, (cube_size/sh[0], cube_size/sh[1], cube_size/sh[2]), order=2)
+
     return scancube
 
+
+############### BEGIN NN HELPERS ##################
+def save_checkpoint(state_dict, save_directory, save_filename, is_best):
+    if not os.path.exists(save_directory):
+        os.mkdir(save_directory)
+
+    full_save_path = os.path.join(save_directory, save_filename)
+
+    torch.save(state_dict, full_save_path)
+
+    if is_best:
+        shutil.copyfile(
+            full_save_path, os.path.join(
+                save_directory, "best_" + save_filename),
+        )
+
+
+def load_checkpoint(model, optimizer, save_directory, load_filename, device):
+    checkpoint = torch.load(os.path.join(save_directory, load_filename))
+    model.load_state_dict(checkpoint['model_state'])
+
+    if optimizer:
+        optimizer.load_state_dict(checkpoint['optimizer_state'])
+        # Make sure optimizer is on same device as model
+        for state in optimizer.state.values():
+            for k, v in state.items():
+                if isinstance(v, torch.Tensor):
+                    state[k] = v.to(device)
+
+    return model, optimizer, checkpoint["accuracy"], checkpoint["epoch"]
+
+
+def mean_normalize(data):
+    """Normalize data by mean"""
+    # mean should be over time and broadcast
+    data= data - torch.mean(data, dim=0)
+    return data
+
+def rescale(data):
+    """scales data between [-1,1]"""
+    m = torch.max(torch.abs(data))
+    return data / m 
+
+def get_dataloaders(batch_size, fold=0, DEVICE='cuda'):
+    """
+    Used to get dataloaders which is used for standard training. 
+    """
+
+    # Load data
+    val_data = np.load('val_data_except_{}.npy'.format(fold), allow_pickle=True)
+    train_data = np.load(
+        'train_data_except_{}.npy'.format(fold), allow_pickle=True)
+    val_labels = np.load('val_labels_except_{}.npy'.format(fold),
+                        allow_pickle=True)  # N x S (variable)
+    train_labels = np.load(
+        'train_labels_except_{}.npy'.format(fold), allow_pickle=True)
+
+
+    # probably want to mean normalize over time
+    val_labels = torch.tensor(val_labels)
+    val_data = torch.tensor(val_data)
+    val_data = mean_normalize(val_data)
+    val_data = rescale(val_data)
+
+    train_labels = [torch.Tensor(y) for y in train_labels]
+    train_data = [torch.Tensor(x) for x in train_data]
+    train_data = mean_normalize(train_data)
+    train_data = rescale(train_data)
+
+
+    class LNDbDataset(Dataset):
+        def __init__(self, examples, labels):
+            self.examples=examples
+            self.phonemes=labels
+        def __getitem__(self, i):
+            ''' returns the example and label of the corresponding index'''
+            return self.examples[i, :,:,:], self.phonemes[i,:,:,:]
+        def __len__(self):
+            return self.labels.shape[0]
+    
+    train_dataset = LNDbDataset(train_data, train_labels)
+    val_dataset = LNDbDataset(val_data, val_labels)
+    
+    train_loader=DataLoader(
+        train_dataset,
+        shuffle = True,
+        #drop_last=True,
+        batch_size = batch_size,
+        pin_memory = True,   # Copy data to CUDA pinned memory
+        # so that they can be transferred to the GPU very fast
+        # Number of worker processes for loading data.
+        num_workers = 8 if DEVICE == 'cuda' else os.cpu_count()//2
+    )
+    val_loader=DataLoader(
+        val_dataset,  
+        batch_size = batch_size,      # Batch size
+        shuffle = False,      # Ok to shuffle after creation
+        pin_memory = True,   # Copy data to CUDA pinned memory
+        # so that they can be transferred to the GPU very fast
+        # Number of worker processes for loading data.
+        num_workers = 8 if DEVICE == 'cuda' else os.cpu_count()//2
+    )
+
+    return train_loader, val_loader
+
+################ END NN HELPERS ###################
 if __name__ == "__main__":
     #Extract and display cube for example nodule
     lnd = 1
