@@ -142,7 +142,7 @@ if __name__ == "__main__":
     train_adversary_settings = (
         args.train_adv_epsilon, args.train_adv_iterations, adv_step)
 
-    eval_adversary_settings = (args.eval_adv_epsilon, args.eval_adv_iterations)
+    eval_adversary_settings = (args.eval_adv_epsilon, args.eval_adv_iterations, adv_step)
 
     # using ResNet50
     model = generate_model(50) 

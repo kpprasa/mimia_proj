@@ -161,12 +161,12 @@ def get_dataloaders(batch_size, fold, DEVICE, datapath):
 
 
     # probably want to mean normalize over time
-    val_labels = torch.FloatTensor(val_labels)
+    val_labels = torch.LongTensor(val_labels)
     val_data = torch.FloatTensor(val_data)
     val_data = mean_normalize(val_data)
     val_data = rescale(val_data)
 
-    train_labels = torch.FloatTensor(train_labels)
+    train_labels = torch.LongTensor(train_labels)
     train_data = torch.FloatTensor(train_data)
     train_data = mean_normalize(train_data)
     train_data = rescale(train_data)

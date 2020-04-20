@@ -69,6 +69,9 @@ def validate(adversary_settings, model, criterion, val_loader, device):
     val_loss = 0.0
     val_correct = 0.0
     val_total = 0.0
+    adv_val_loss = 0.0
+    adv_val_correct = 0.0
+
 
     adv_epsilon, adv_iterations, adv_step = adversary_settings
     adversary = L2PGDAttack(
@@ -85,7 +88,8 @@ def validate(adversary_settings, model, criterion, val_loader, device):
 
     for examples, labels in val_loader:
         examples, labels = examples.to(device), labels.to(device)
-
+        # need to explicitly represent 1 input channel
+        examples = torch.unsqueeze(examples, 1)
         outputs = model(examples)
 
         # Normal
