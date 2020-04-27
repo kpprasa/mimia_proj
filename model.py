@@ -122,7 +122,9 @@ class ResNet(nn.Module):
                  no_max_pool=False,
                  shortcut_type='B',
                  widen_factor=1.0,
-                 n_classes=4):
+                 n_classes=4,
+                 latent=False):
+                 # Latent is for visualization 
         super().__init__()
 
         block_inplanes = [int(x * widen_factor) for x in block_inplanes]
@@ -219,8 +221,10 @@ class ResNet(nn.Module):
 
         x = self.avgpool(x)
 
-        x = x.view(x.size(0), -1)
-        x = self.fc(x)
+        pre = x.view(x.size(0), -1)
+        x = self.fc(pre)
+        if latent:
+            return x, pre
 
         return x
 
