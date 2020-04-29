@@ -39,7 +39,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--datapath",
     type=str,
-    default="..",
+    default=".",
     help="path where train and validation data can be found",
 )
 parser.add_argument(

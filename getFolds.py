@@ -14,7 +14,7 @@ import numpy as np
 import random
 import csv
 from utils import readCsv, writeCsv
-import click
+import argparse
 
 
 def getFold(fold = 0, fname_in = 'trainFolds.csv',
@@ -46,8 +46,20 @@ def getFold(fold = 0, fname_in = 'trainFolds.csv',
         
         #Save to csv
         writeCsv(prefix_out+fname,[header]+lines)
-            
+
+
+parser = argparse.ArgumentParser(
+    description="Adversarial Training for LNDb Dataset; MIMIA 2020 Final project by Kiran Prasad"
+)
+parser.add_argument(
+    "--val",
+    type=bool,
+    default=True,
+    help="Generate Validation sets or training sets",
+)
+args = parser.parse_args()
 if __name__ == "__main__":
-    # Get all folds except 0 from trainset
+    # Get all folds except fold from trainset
     fold = input('fold number?')
-    getFold(fold=fold, fnames=['Nodules_gt.csv'], prefix_out='val_fold_{}'.format(fold), excludeFold=False) # want consolidated 
+    val = args.val
+    getFold(fold=fold, fnames=['Nodules_gt.csv'], prefix_out='val_fold_{}'.format(fold) if val else 'folds_exclude_{}'.format(fold), excludeFold=False) # want consolidated 

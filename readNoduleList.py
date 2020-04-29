@@ -1,4 +1,14 @@
-''' For matching different radiologists' readings into a single ground truth'''
+''' 
+    readNoduleList.py
+
+    For matching different radiologists' readings into a single ground truth
+    Commented and modified for project. 
+
+    ______________________________________________________
+    by Kiran Prasad <kiranpra@cs.cmu.edu>
+    16-725 Methods in Medical Image Analysis Final Project
+    ======================================================
+'''
 import numpy as np
 import math
 
